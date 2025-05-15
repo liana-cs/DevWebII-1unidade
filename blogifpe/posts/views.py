@@ -33,8 +33,12 @@ def delete_post(request, pk):
     return render(request, 'templates/list_posts.html')
 
 def view_post(request, pk):
-    post = Post.objects.all(pk=pk)
-    context = {
-        'post': post
-    }
+    try:
+        post = Post.objects.all(pk=pk)
+        context = {
+            'post': post
+        }
+    except Post.DoesNotExist:
+        messages.error(request, 'Post not found.')
+        return redirect('list_posts')
     return render(request, 'templates/view_post.html', context)
