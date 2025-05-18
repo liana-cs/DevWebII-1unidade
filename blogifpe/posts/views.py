@@ -45,7 +45,20 @@ def create_post(request):
 
 
 def update_post(request, pk):
-    pass
+    post = Post.objects.get(pk=pk)
+    form = PostForm(request.POST or None, instance=post)
+    sucess = False
+    if form.is_valid():
+        form.save()
+        return redirect('view_post')
+    else:
+        messages.error(request, 'Error updating post. Please check the form.')
+    context = {
+        'form': form,
+        'post': post,
+        'success': sucess
+    }   
+    return render(request, 'templates/update_post.html', context)
 
 def delete_post(request, pk):
     try:
