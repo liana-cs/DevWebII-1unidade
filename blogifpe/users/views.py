@@ -6,6 +6,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework import status
+from drf_yasg.utils import swagger_auto_schema
 from django.contrib.auth import authenticate, login
 import jwt
 from datetime import datetime, timedelta, timezone
@@ -29,6 +30,7 @@ def user_panel(request):
         }
     return render(request, 'templates/user_panel.html', {'user': user_data} )
 
+@swagger_auto_schema(method='post', request_body=RegisterSerializer)
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def user_register(request):
@@ -42,6 +44,7 @@ def user_register(request):
         return Response({"error": "Authentication failed after registration"}, status=status.HTTP_400_BAD_REQUEST)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+@swagger_auto_schema(method='post', request_body=LoginSerializer)
 @permission_classes([AllowAny])
 @api_view(['POST'])
 def user_login(request):

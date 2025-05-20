@@ -35,9 +35,7 @@ schema_view = get_schema_view(
 
 urlpatterns = [
     path("posts/", include("posts.urls")),
-    path('', list_posts, name="list_posts"),
-    path('register/', user_register, name='user_register'),
-    path('login/', user_login, name='user_login'),    
+    path('', list_posts, name="list_posts"), 
     path('user/', include('users.urls')),
     path('categories/', include('categories.urls')),
     path('admin/', admin.site.urls),

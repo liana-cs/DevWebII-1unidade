@@ -40,8 +40,9 @@ INSTALLED_APPS = [
     'posts',
     'categories',
     'rest_framework',
-    'users'
-]
+    'users',
+    'rest_framework_simplejwt',
+    'drf_yasg',]
 
 REST_FRAMEWORK = {
 
