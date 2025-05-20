@@ -1,11 +1,15 @@
-from venv import logger
-from django.http import HttpResponseRedirect
 from django.shortcuts import redirect, render
 from django.contrib.auth import logout
-from users.forms import RegisterForm, LoginForm
+from users.serializers import RegisterSerializer, LoginSerializer
 from django.contrib import messages
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
+from rest_framework import status
 from django.contrib.auth import authenticate, login
-from django.contrib.auth.forms import AuthenticationForm
+import jwt
+from datetime import datetime, timedelta, timezone
+from django.conf import settings
 
 # Create your views here.
 
@@ -25,38 +29,42 @@ def user_panel(request):
         }
     return render(request, 'templates/user_panel.html', {'user': user_data} )
 
+@api_view(['POST'])
+@permission_classes([AllowAny])
 def user_register(request):
-    if request.method == 'POST':
-        form = RegisterForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            email = form.cleaned_data['email']
-            password = form.cleaned_data['password1']
-            user = authenticate(request, username=email, password=password)
-            if user is not None:
-                login(request, user)
-                logger.info(f'User {user.username} successfully registered and logged in.')
-                return redirect('user_panel')
-            else:
-                logger.error('Error: User not authenticated after registration.')   
-    else:
-        form = RegisterForm()
-    return render(request, 'templates/register.html', {'form': form})
+    serializer = RegisterSerializer(data=request.data)
+    if serializer.is_valid():
+        user = serializer.save()
+        user = authenticate(request, username=user.username, password=request.data['password1'])
+        if user is not None:
+            login(request, user)
+            return Response({"message": "User created and logged in"}, status=status.HTTP_201_CREATED)
+        return Response({"error": "Authentication failed after registration"}, status=status.HTTP_400_BAD_REQUEST)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+@permission_classes([AllowAny])
+@api_view(['POST'])
 def user_login(request):
-    if request.method == 'POST':
-        form = LoginForm(request, request.POST)
-        if form.is_valid():
-            username = form.cleaned_data.get('username')
-            password = form.cleaned_data.get('password')
-            user = authenticate(request, username=username, password=password)
-            if user is not None:
-                login(request, user)
-                return redirect('user_panel') 
-    else:
-        form = LoginForm()
-    return render(request, 'templates/login.html', {'form': form})
+    serializer = LoginSerializer(data=request.data)
+    if not serializer.is_valid():
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    username = serializer.validated_data['username']
+    password = serializer.validated_data['password']
 
+    user = authenticate(request, username=username, password=password)
+
+    if not user:
+        return Response({'error': 'Invalid Credentials'}, status=status.HTTP_401_UNAUTHORIZED)
+    payload = {
+        'user_id': user.id,
+        'exp': datetime.now(timezone.utc) + timedelta(hours=24),  
+        'iat': datetime.now(timezone.utc),
+    }
+
+    token = jwt.encode(payload, settings.SECRET_KEY, algorithm='HS256')
+
+    return Response({'token': token, 'username': user.username})
     
 def manage_profile(request):
     user = request.user

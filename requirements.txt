@@ -3,6 +3,7 @@ Django
 pytz==2020.5
 sqlparse==0.4.2
 djangorestframework
+djangorestframework-simplejwt
 markdown
 django-filter
 django-cors-headers
@@ -17,3 +18,4 @@ referencing
 rpds-py
 typing-extensions
 uritemplate
+jwt

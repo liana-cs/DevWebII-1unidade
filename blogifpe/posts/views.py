@@ -1,5 +1,11 @@
 from django.shortcuts import redirect, render
 from django.http import HttpResponse
+from drf_yasg.utils import swagger_auto_schema
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework import status
+from .serializers import PostSerializer
 from .models import Post
 from .forms import PostForm
 from django.contrib import messages
@@ -9,75 +15,74 @@ from categories.models import Category
 def index(request):
     return HttpResponse("Hello, world! You're at the posts index.")
 
+@swagger_auto_schema(method='get', operation_summary="API URLs")
+@api_view(['GET'])
+def blog_api(request):
+    api_urls = {
+        'List': '/posts/',
+        'Detail View': '/posts/<str:pk>/',
+        'Create': '/posts/create/',
+        'Update': '/posts/<str:pk>/update/',
+        'Delete': '/posts/<str:pk>/delete/',
+    }
+    return Response(api_urls)
+
+@swagger_auto_schema(method='get', operation_summary="List all posts", )
+@api_view(['GET'])
 def list_posts(request):
     all_posts = Post.objects.all()
-    context = {
-        'posts': all_posts
-    }
-    return render(request, 'templates/list_posts.html', context)
+    serializer = PostSerializer(all_posts, many=True)
+    return Response(serializer.data)
 
+@swagger_auto_schema(method='POST', operation_summary="Create a new post", 
+                     request_body=PostSerializer, responses={201: "Post created successfully"})
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def create_post(request):
     try:
-        categories = Category.objects.all()
-        post = Post.objects.all()
-        sucess = False
-        if request.method == 'POST':
-            post_form = PostForm(request.POST or None, request.FILES)
-            if post_form.is_valid():
-                post_form.save()
-                sucess = True
-                messages.success(request, 'Post created successfully.')
-                return redirect('list_posts')
-            else:
-                messages.error(request, 'Error creating post. Please check the form.')
-        else:
-            post_form = PostForm()
-        context = {
-            'form': post_form,
-            'categories': categories,
-            'posts': post,
-            'success': sucess
-        }
-        return render(request, 'templates/create_post.html', context)
+        serializer = PostSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(author=request.user)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
-        messages.error(request, f'An error occurred: {e}')
-        return redirect('list_posts')
+        return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
-
+@swagger_auto_schema(method='PUT', operation_summary="Update a  post", 
+                    request_body=PostSerializer, responses={200: "Post updated successfully"})
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
 def update_post(request, pk):
-    post = Post.objects.get(pk=pk)
-    form = PostForm(request.POST or None, instance=post)
-    sucess = False
-    if form.is_valid():
-        form.save()
-        return redirect('view_post')
-    else:
-        messages.error(request, 'Error updating post. Please check the form.')
-    context = {
-        'form': form,
-        'post': post,
-        'success': sucess
-    }   
-    return render(request, 'templates/update_post.html', context)
+    try:
+        post = Post.objects.get(pk=pk)
+    except Post.DoesNotExist:
+        return Response({'error': 'Post not found'}, status=status.HTTP_404_NOT_FOUND)
+    
+    serializer = PostSerializer(post, data=request.data)    
+    if serializer.is_valid():
+        serializer.save(author=request.user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+@swagger_auto_schema(method='DELETE', operation_summary="Delete a post")
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
 def delete_post(request, pk):
     try:
         post = Post.objects.get(pk=pk)
-        if request.method == 'POST': #em django só tem metodos get e post
-            post.delete()
-            messages.success(request, 'Post deleted successfully.')
-            return redirect('list_posts')
+        if post.author != request.user:
+            return Response({'error': 'You do not have permission to delete this post'}, status=status.HTTP_403_FORBIDDEN)
+        post.delete()
+        return Response({'message': 'Post deleted successfully'}, status=status.HTTP_204_NO_CONTENT)
     except Post.DoesNotExist:
-        messages.error(request, 'Post not found.')
-    return render(request, 'templates/list_posts.html')
+        return Response({'error': 'Post not found'}, status=status.HTTP_404_NOT_FOUND)
 
+@swagger_auto_schema(method='get', operation_summary="View a single post")
+@api_view(['GET'])
 def view_post(request, pk):
     try:
-        post = Post.objects.all(pk=pk)
-        context = {
-            'post': post
-        }
+        post = Post.objects.get(pk=pk)
+        serializer = PostSerializer(post)
+        return Response(serializer.data)
     except Post.DoesNotExist:
-        messages.error(request, 'Post not found.')
-        return redirect('list_posts')
-    return render(request, 'templates/view_post.html', context)
+        return Response({'error': 'Post not found'}, status=status.HTTP_404_NOT_FOUND)
