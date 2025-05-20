@@ -1,0 +1,107 @@
+* { /* tirar as margens padrao do documento */    
+    margin: 0;
+    padding: 0;
+}
+
+body {/* configurações do body, definindo cor de fundo, tipo e cor da fonte, posição do texto e altura minima para que o corpo fique da altura da janela do dispositivo */
+    background-color: #ffffff;
+    min-height: 100vh;
+    font-family: 'Poppins', sans-serif;
+    color: #293241;
+    position: relative;
+
+}
+
+.cover {/* configurações do bloco de capa, definindo tamanho, alinhamento ao centro e colocando como coluna a direção */
+    background-color: #98c1d9;
+    border-radius: 10px;
+    padding: 20px;
+    margin:auto;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    width: 60%;
+    display: flex;
+    gap: 50px;
+    /* flex-direction: column; */
+    align-items: center;
+    justify-content: center;
+}
+
+
+.cover__name {/* configurações do titulo principal do site, definindo tipo e tamanho da fonte, alinhamento ao centro, cor da fonte, margem e uma borda para o texto */
+    font-family: 'Poppins', sans-serif;
+    text-align: center;
+    width: 50%;
+    max-width: 350px;
+    font-size: 62px;
+    font-weight: 400;
+    color: #ee6c4d;
+    margin: 16px 0;
+    /* -webkit-text-stroke: 1px #a2d8a6; */
+}
+
+.cover__description {/* configurações do texto de descrição da capa do site, tamanho e cor da fonte, margem, tamanho máximo e alinhado ao centro */
+    font-size: 16px;
+    font-weight: 400;
+    color: #293241;
+    margin: 0;
+    width: 50%;
+    max-width: 350px;
+    text-align: center;
+}
+
+@media screen and (max-width: 855px) {/* configurações da descrição para dispositivos com tamanho máximo de 855px */
+
+    .cover {
+        flex-direction: column;
+        gap: 3px;
+    }
+
+    .cover__name {
+        font-size: 50px;
+    }
+
+    .cover__description {
+        font-size: 90%;
+    }
+}
+
+
+.index {/* definindo o tamanho, alinhamento ao centro, margem e padding do bloco principal do site */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+}
+
+@media screen and (max-width: 855px) {/* definindo o padding e margem da main para dispositivos com tamanho até 855px */
+    main {
+        padding: 10px; 
+        margin: auto;
+        overflow: hidden;
+    }
+}
+
+footer {/* configuração do footer, alterando a cor da fonte, o tamanho máximo e a altura, mudando a cor de fundo, alinhando elementos ao centro, incluindo no tamanho o padding do documento, mantendo sua posição absoluta */
+    color: #293241;
+    width: 100%;
+    height: 30px;
+    background-color: #ee6c4d;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    position: absolute;
+    bottom: 0;    
+    margin-top: 10px;
+}
+
+@media screen and (max-width: 855px) {/* configurações do footer para dispositivos menores (Até 855px) */
+    footer {
+        text-overflow: ellipsis ;
+        font-size: 80%;
+        margin-top: 20px;
+        bottom: 0;
+        padding-top: 5px;
+    }
+}

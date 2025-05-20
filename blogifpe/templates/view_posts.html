@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    {% if post %}
+        <h1>{{ post.slug }}</h1>
+        <p><strong>Createad by:</strong> {{ post.author }}</p>
+        <p><strong>Category:</strong> {{ post.category.name }}</p>
+        <p>{{ post.image }}</p>
+        <p>{{ post.body }}</p>
+        <p><strong>Date:</strong> {{ post.pub_date }}</p>
+
+        <p><a href="{% url 'list_posts' %}">← Back</a></p>
+    {% else %}
+        <p>No posts found..</p>
+    {% endif %}
+{% endblock content %}
