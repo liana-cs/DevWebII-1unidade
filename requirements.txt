@@ -2,7 +2,7 @@ asgiref==3.3.2
 Django
 pytz==2020.5
 sqlparse==0.4.2
-djangorestframework
+djangorestframework==3.13.1
 djangorestframework-simplejwt
 markdown
 django-filter
@@ -19,3 +19,4 @@ rpds-py
 typing-extensions
 uritemplate
 jwt
+setuptools
