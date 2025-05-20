@@ -12,9 +12,6 @@ from django.contrib import messages
 from categories.models import Category
 # Create your views here.
 
-def index(request):
-    return HttpResponse("Hello, world! You're at the posts index.")
-
 @swagger_auto_schema(method='get', operation_summary="API URLs")
 @api_view(['GET'])
 def blog_api(request):
