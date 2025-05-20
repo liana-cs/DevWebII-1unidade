@@ -5,3 +5,15 @@ sqlparse==0.4.2
 djangorestframework
 markdown
 django-filter
+django-cors-headers
+drf-yasg
+drf-spectacular
+inflection
+jsonschema
+jsonschema-specifications
+packaging
+pyYaml
+referencing
+rpds-py
+typing-extensions
+uritemplate
