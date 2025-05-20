@@ -15,9 +15,17 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from posts.views import list_posts
+from users.views import user_register, user_login
+from categories.views import get_categories
 
 urlpatterns = [
     path("posts/", include("posts.urls")),
+    path('', list_posts, name="list_posts"),
+    path('register/', user_register, name='user_register'),
+    path('login/', user_login, name='user_login'),    
+    path('user/', include('users.urls')),
+    path('category/<str:cats>/', get_categories, name='get_categories'),
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls'))
 ]
