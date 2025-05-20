@@ -5,7 +5,6 @@ from categories.models import Category
 
 # Create your models here.
 class Post(models.Model):
-    id = models.AutoField(primary_key=True, default=uuid.uuid4, editable=False)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=200, null=False)
     body = models.TextField(null=False)
