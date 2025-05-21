@@ -1,31 +1,17 @@
-from django.shortcuts import redirect, render
-from django.http import HttpResponse
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework import status
 from .serializers import PostSerializer
 from .models import Post
-from .forms import PostForm
-from django.contrib import messages
-from categories.models import Category
+
 # Create your views here.
 
-@swagger_auto_schema(method='get', operation_summary="API URLs")
-@api_view(['GET'])
-def blog_api(request):
-    api_urls = {
-        'List': '/posts/',
-        'Detail View': '/posts/<str:pk>/',
-        'Create': '/posts/create/',
-        'Update': '/posts/<str:pk>/update/',
-        'Delete': '/posts/<str:pk>/delete/',
-    }
-    return Response(api_urls)
 
 @swagger_auto_schema(method='get', operation_summary="List all posts", )
 @api_view(['GET'])
+@permission_classes([AllowAny])
 def list_posts(request):
     all_posts = Post.objects.all()
     serializer = PostSerializer(all_posts, many=True)
@@ -76,6 +62,7 @@ def delete_post(request, pk):
 
 @swagger_auto_schema(method='get', operation_summary="View a single post")
 @api_view(['GET'])
+@permission_classes([AllowAny])
 def view_post(request, pk):
     try:
         post = Post.objects.get(pk=pk)
