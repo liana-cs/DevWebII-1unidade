@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 import os
 from pathlib import Path
+from mongoengine import connect
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -24,6 +25,13 @@ SECRET_KEY = 'django-insecure--=7(u)3#fl-9^-fa^^7**n$(j6*gt!3z3#5%leexbu)-zx-_o5
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+
+# Check if the environment is production
+PROD_ENV = os.getenv('DJANGO_PROD_ENV', 'False').lower() in ('true', '1', 'yes')
+
+# Check if comments are enabled
+COMMENTS = os.getenv('DJANGO_COMMENTS', 'False').lower() in ('true', '1', 'yes')
+
 
 ALLOWED_HOSTS = ["*"]
 
@@ -105,12 +113,32 @@ WSGI_APPLICATION = 'blogifpe.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+
+if not PROD_ENV:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': 'django',
+            'USER': 'karen',
+            'PASSWORD': '',
+            'HOST': '',
+            'PORT': '5432',
+        }        
+    }
+
+
+if COMMENTS:
+    mongo_host = '127.0.0.1' 
+    mongo_port = 27017
+    mongo_database = 'blogifpe_comments'
+    connect(mongo_database, host=mongo_host, port=mongo_port)
 
 
 # Password validation

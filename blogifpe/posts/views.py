@@ -1,10 +1,11 @@
+from datetime import datetime
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework import status
-from .serializers import PostSerializer
-from .models import Post
+from .serializers import PostSerializer, CommentSerializer
+from .models import Post, Comment
 
 # Create your views here.
 
@@ -70,3 +71,33 @@ def view_post(request, pk):
         return Response(serializer.data)
     except Post.DoesNotExist:
         return Response({'error': 'Post not found'}, status=status.HTTP_404_NOT_FOUND)
+
+@swagger_auto_schema(method='get', operation_summary="List comments for a post")   
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def list_comments(request, pk):
+    try:
+        comments = Comment.objects.filter(post=pk)
+        serializer = CommentSerializer(comments, many=True)
+        return Response(serializer.data)
+    except Comment.DoesNotExist:
+        return Response({'error': 'Comments not found'}, status=status.HTTP_404_NOT_FOUND)
+
+@swagger_auto_schema(method='POST', operation_summary="Create a comment",
+                     request_body=CommentSerializer, responses={201: "Comment created successfully"})    
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def create_comment(request, pk):
+    if request.method == 'POST':
+        data = request.data
+        data['post'] = pk
+        data['author'] = request.user.username
+        data['pub_date'] = datetime.now()
+
+        serializer = CommentSerializer(data=data)
+        if serializer.is_valid():
+            comment = Comment(**serializer.validated_data)
+            comment.save()
+            response_serializer = CommentSerializer(comment)
+            return Response(response_serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

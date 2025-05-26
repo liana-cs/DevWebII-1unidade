@@ -1,7 +1,8 @@
+from datetime import datetime
 from django.db import models
 from django.contrib.auth.models import User
-import uuid
 from categories.models import Category
+import mongoengine as me
 
 # Create your models here.
 class Post(models.Model):
@@ -17,3 +18,13 @@ class Post(models.Model):
     def __str__(self):
         return self.title
     
+class Comment(me.Document):
+    post = me.IntField(required=True)
+    author = me.StringField(max_length=100, required=True)
+    body = me.StringField(required=True)
+    pub_date = me.DateTimeField(required=True, default=datetime.utcnow)
+
+    meta = {'collection': 'comments', 'ordering': ['-pub_date']}
+
+    def __str__(self):
+        return f'Comment by {self.author} on {self.post.title}'
