@@ -1,14 +1,22 @@
 from datetime import datetime
 from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework import status
+from rest_framework import status, viewsets, filters
 from .serializers import PostSerializer, CommentSerializer
 from .models import Post, Comment
+from django.db.models import Q
+
 
 # Create your views here.
 
+class PostViewSet(viewsets.ModelViewSet):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['title', 'content']
 
 @swagger_auto_schema(method='get', operation_summary="List all posts", )
 @api_view(['GET'])
@@ -101,3 +109,22 @@ def create_comment(request, pk):
             response_serializer = CommentSerializer(comment)
             return Response(response_serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@swagger_auto_schema(method='get', operation_summary="Search posts by title or body",
+                     manual_parameters=[openapi.Parameter(
+                        name='search',
+                        in_=openapi.IN_QUERY,  
+                        required=False,
+                        type=openapi.TYPE_STRING,
+                        description='Search term for post title or body'
+                    )])
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def search_posts(request):
+    query = request.GET.get('search', '')
+    if query:
+        posts = Post.objects.filter(Q(title__icontains=query) | Q(body__icontains=query))
+    else:
+        posts = Post.objects.all()
+    serializer = PostSerializer(posts, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
