@@ -8,7 +8,6 @@ markdown
 django-filter
 django-cors-headers
 drf-yasg
-drf-spectacular
 inflection
 jsonschema
 jsonschema-specifications
@@ -21,3 +20,4 @@ uritemplate
 jwt
 setuptools
 Pillow
+mongoengine
