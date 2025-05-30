@@ -3,7 +3,7 @@ Django
 pytz==2020.5
 sqlparse==0.4.2
 djangorestframework==3.13.1
-djangorestframework-simplejwt
+djangorestframework-simplejwt==5.2.2
 markdown
 django-filter
 django-cors-headers
@@ -17,7 +17,7 @@ referencing
 rpds-py
 typing-extensions
 uritemplate
-jwt
+PyJWT<2.0.0
 setuptools
 Pillow
 mongoengine

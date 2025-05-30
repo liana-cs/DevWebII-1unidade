@@ -132,7 +132,7 @@ else:
             'ENGINE': 'django.db.backends.postgresql_psycopg2',
             'NAME': 'django',
             'USER': 'karen',
-            'PASSWORD': '',
+            'PASSWORD': 'liana',
             'HOST': '',
             'PORT': '5432',
         }        
