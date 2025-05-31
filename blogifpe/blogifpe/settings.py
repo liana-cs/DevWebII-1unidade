@@ -131,19 +131,26 @@ else:
         'default': {
             'ENGINE': 'django.db.backends.postgresql_psycopg2',
             'NAME': 'django',
-            'USER': 'karen',
+            'USER': 'postgres',
             'PASSWORD': 'liana',
-            'HOST': '',
+            'HOST': 'postgres',
             'PORT': '5432',
         }        
     }
 
 
 if COMMENTS:
-    mongo_host = '127.0.0.1' 
+    mongo_host = 'mongo' 
     mongo_port = 27017
     mongo_database = 'blogifpe_comments'
-    connect(mongo_database, host=mongo_host, port=mongo_port)
+    connect(
+        db=mongo_database,
+        host=mongo_host,
+        port=mongo_port,
+        username='karen',
+        password='liana',
+        authentication_source='admin'
+    )
 
 
 # Password validation
