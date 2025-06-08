@@ -4,6 +4,7 @@ pytz==2020.5
 sqlparse==0.4.2
 djangorestframework==3.13.1
 djangorestframework-simplejwt==5.2.2
+PyJWT<2.0.0
 markdown
 psycopg2-binary
 django-filter
@@ -18,7 +19,6 @@ referencing
 rpds-py
 typing-extensions
 uritemplate
-PyJWT<2.0.0
 setuptools
 Pillow
 mongoengine
