@@ -6,10 +6,10 @@ djangorestframework==3.13.1
 djangorestframework-simplejwt==5.2.2
 PyJWT<2.0.0
 markdown
+psycopg2-binary
 django-filter
 django-cors-headers
 drf-yasg
-drf-spectacular
 inflection
 jsonschema
 jsonschema-specifications
@@ -21,3 +21,4 @@ typing-extensions
 uritemplate
 setuptools
 Pillow
+mongoengine

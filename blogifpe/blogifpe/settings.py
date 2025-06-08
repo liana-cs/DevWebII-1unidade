@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 import os
 from pathlib import Path
+from mongoengine import connect
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -24,6 +25,13 @@ SECRET_KEY = 'django-insecure--=7(u)3#fl-9^-fa^^7**n$(j6*gt!3z3#5%leexbu)-zx-_o5
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+
+# Check if the environment is production
+PROD_ENV = os.getenv('DJANGO_PROD_ENV', 'False').lower() in ('true', '1', 'yes')
+
+# Check if comments are enabled
+COMMENTS = os.getenv('DJANGO_COMMENTS', 'False').lower() in ('true', '1', 'yes')
+
 
 ALLOWED_HOSTS = ["*"]
 
@@ -42,7 +50,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'users',
     'rest_framework_simplejwt',
-    'drf_yasg',]
+    'drf_yasg',
+    'corsheaders']
 
 REST_FRAMEWORK = {
 
@@ -55,6 +64,11 @@ REST_FRAMEWORK = {
         
     ],
 
+    'DEFAULT_FILTER_BACKENDS': [
+        'rest_framework.filters.SearchFilter',
+        'django_filters.rest_framework.DjangoFilterBackend',
+    ],
+
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     
     'PAGE_SIZE': 10,
@@ -64,22 +78,40 @@ SWAGGER_SETTINGS = {
     'USE_SESSION_AUTH': False,
     'SECURITY_DEFINITIONS': {
         'Bearer': {
-           'type': 'apiKey',
-           'name': 'Authorization',
-           'in': 'header',
-       }
-    }
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'header',
+        }
+    },
+    'SECURE_PROXY_SSL_HEADER': ('HTTP_X_FORWARDED_PROTO', 'https'),
+    'USE_X_FORWARDED_HOST': True,
 }
 
+"""
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "https://fd5982ea6e7e427ea704a7ecda8b5b0c.vfs.cloud9.us-east-1.amazonaws.com",
+    "https://fd5982ea6e7e427ea704a7ecda8b5b0c.vfs.cloud9.us-east-1.amazonaws.com:8080",
+    "https://fd5982ea6e7e427ea704a7ecda8b5b0c.vfs.cloud9.us-east-1.amazonaws.com:8081",
+]
+"""
+
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_HEADERS = ['*']
+CORS_ALLOW_METHODS = ['DELETE', 'GET', 'OPTIONS', 'PATCH', 'POST', 'PUT']
+
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware'
 ]
+
 
 ROOT_URLCONF = 'blogifpe.urls'
 
@@ -105,12 +137,39 @@ WSGI_APPLICATION = 'blogifpe.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+
+if not PROD_ENV:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': 'django',
+            'USER': 'postgres',
+            'PASSWORD': 'liana',
+            'HOST': 'postgres',
+            'PORT': '5432',
+        }        
+    }
+
+
+if COMMENTS:
+    mongo_host = 'mongo' 
+    mongo_port = 27017
+    mongo_database = 'blogifpe_comments'
+    connect(
+        db=mongo_database,
+        host=mongo_host,
+        port=mongo_port,
+        username='karen',
+        password='liana',
+        authentication_source='admin'
+    )
 
 
 # Password validation
@@ -166,3 +225,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_REDIRECT_URL = 'list_posts'
 LOGOUT_REDIRECT_URL = 'list_posts'
+
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+USE_X_FORWARDED_HOST = True

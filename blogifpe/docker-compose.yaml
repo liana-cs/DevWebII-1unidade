@@ -1,0 +1,35 @@
+services:
+  blog:
+    build: .
+    ports:
+      - '8081:8081'
+    environment:
+      - DJANGO_PROD_ENV=True
+      - DJANGO_COMMENTS=True
+    depends_on:
+      - postgres
+      - mongo
+
+      
+  mongo:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    environment:
+     MONGO_INITDB_ROOT_USERNAME: karen
+     MONGO_INITDB_ROOT_PASSWORD: liana
+
+  postgres:
+    image: 'postgres:15-alpine'
+    container_name: postgres
+    environment:
+      - 'POSTGRES_DB=django'
+      - 'POSTGRES_PASSWORD=liana'
+      - 'POSTGRES_USER=postgres'
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
