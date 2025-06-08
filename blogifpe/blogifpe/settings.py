@@ -50,7 +50,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'users',
     'rest_framework_simplejwt',
-    'drf_yasg',]
+    'drf_yasg',
+    'corsheaders']
 
 REST_FRAMEWORK = {
 
@@ -77,22 +78,40 @@ SWAGGER_SETTINGS = {
     'USE_SESSION_AUTH': False,
     'SECURITY_DEFINITIONS': {
         'Bearer': {
-           'type': 'apiKey',
-           'name': 'Authorization',
-           'in': 'header',
-       }
-    }
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'header',
+        }
+    },
+    'SECURE_PROXY_SSL_HEADER': ('HTTP_X_FORWARDED_PROTO', 'https'),
+    'USE_X_FORWARDED_HOST': True,
 }
 
+"""
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "https://fd5982ea6e7e427ea704a7ecda8b5b0c.vfs.cloud9.us-east-1.amazonaws.com",
+    "https://fd5982ea6e7e427ea704a7ecda8b5b0c.vfs.cloud9.us-east-1.amazonaws.com:8080",
+    "https://fd5982ea6e7e427ea704a7ecda8b5b0c.vfs.cloud9.us-east-1.amazonaws.com:8081",
+]
+"""
+
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_HEADERS = ['*']
+CORS_ALLOW_METHODS = ['DELETE', 'GET', 'OPTIONS', 'PATCH', 'POST', 'PUT']
+
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware'
 ]
+
 
 ROOT_URLCONF = 'blogifpe.urls'
 
@@ -206,3 +225,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_REDIRECT_URL = 'list_posts'
 LOGOUT_REDIRECT_URL = 'list_posts'
+
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+USE_X_FORWARDED_HOST = True
