@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 import os
 from pathlib import Path
 from mongoengine import connect
+from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -74,6 +75,11 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 10,
 }
 
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=1), 
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
+}
+
 SWAGGER_SETTINGS = {
     'USE_SESSION_AUTH': False,
     'SECURITY_DEFINITIONS': {
@@ -86,15 +92,6 @@ SWAGGER_SETTINGS = {
     'SECURE_PROXY_SSL_HEADER': ('HTTP_X_FORWARDED_PROTO', 'https'),
     'USE_X_FORWARDED_HOST': True,
 }
-
-"""
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    "https://fd5982ea6e7e427ea704a7ecda8b5b0c.vfs.cloud9.us-east-1.amazonaws.com",
-    "https://fd5982ea6e7e427ea704a7ecda8b5b0c.vfs.cloud9.us-east-1.amazonaws.com:8080",
-    "https://fd5982ea6e7e427ea704a7ecda8b5b0c.vfs.cloud9.us-east-1.amazonaws.com:8081",
-]
-"""
 
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
