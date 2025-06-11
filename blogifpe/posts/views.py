@@ -8,6 +8,8 @@ from rest_framework import status, viewsets, filters
 from .serializers import PostSerializer, CommentSerializer
 from .models import Post, Comment
 from django.db.models import Q
+from bson import ObjectId
+from bson.errors import InvalidId
 
 
 # Create your views here.
@@ -109,6 +111,93 @@ def create_comment(request, pk):
             response_serializer = CommentSerializer(comment)
             return Response(response_serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@swagger_auto_schema(
+    method='put',
+    operation_summary="Update comment (only author can update)",
+    request_body=openapi.Schema(
+        type=openapi.TYPE_OBJECT,
+        properties={
+            'body': openapi.Schema(type=openapi.TYPE_STRING, description='Updated comment text')
+        },
+        required=['body']
+    ),
+    responses={
+        200: "Comment updated successfully",
+        404: "Comment not found",
+        403: "Permission denied - not the author"
+    }
+)
+@api_view(['PUT', 'PATCH'])
+@permission_classes([IsAuthenticated])
+def update_comment(request, pk, comment_id):
+    """Update a comment (only the author can update)"""
+    try:
+        comment = Comment.objects.get(id=ObjectId(comment_id), post=pk)
+    except (Comment.DoesNotExist, InvalidId):
+        return Response({'error': 'Comment not found'}, status=status.HTTP_404_NOT_FOUND)
+    
+
+    comment_author_id = getattr(comment, 'author_id', None)
+    if comment_author_id != request.user.id and comment.author != request.user.username:
+        return Response({
+            'error': 'You can only edit your own comments.'
+        }, status=status.HTTP_403_FORBIDDEN)
+    
+
+    body = request.data.get('body', '').strip()
+    if not body:
+        return Response({'error': 'Comment body is required.'}, status=status.HTTP_400_BAD_REQUEST)
+    
+    if len(body) > 500:
+        return Response({'error': 'Comment is too long (max 500 characters).'}, status=status.HTTP_400_BAD_REQUEST)
+    
+
+    comment.body = body
+    comment.updated_at = datetime.now()
+    comment.save()
+    
+    response_data = {
+        'id': str(comment.id),
+        'post': comment.post,
+        'author': comment.author,
+        'author_id': getattr(comment, 'author_id', None),
+        'body': comment.body,
+        'pub_date': comment.pub_date,
+        'updated_at': comment.updated_at
+    }
+    
+    return Response(response_data)
+
+@swagger_auto_schema(
+    method='delete',
+    operation_summary="Delete comment (only author can delete)",
+    responses={
+        204: "Comment deleted successfully",
+        404: "Comment not found",
+        403: "Permission denied - not the author"
+    }
+)
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def delete_comment(request, pk, comment_id):
+    """Delete a comment (only the author can delete)"""
+    try:
+        comment = Comment.objects.get(id=ObjectId(comment_id), post=pk)
+    except (Comment.DoesNotExist, InvalidId):
+        return Response({'error': 'Comment not found'}, status=status.HTTP_404_NOT_FOUND)
+    
+    comment_author_id = getattr(comment, 'author_id', None)
+    if comment_author_id != request.user.id and comment.author != request.user.username:
+        return Response({
+            'error': 'You can only delete your own comments.'
+        }, status=status.HTTP_403_FORBIDDEN)
+    
+    comment.delete()
+    
+    return Response({
+        'message': 'Comment deleted successfully'
+    }, status=status.HTTP_204_NO_CONTENT)
 
 @swagger_auto_schema(method='get', operation_summary="Search posts by title or body",
                      manual_parameters=[openapi.Parameter(

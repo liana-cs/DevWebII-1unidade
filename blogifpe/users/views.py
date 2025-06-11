@@ -49,3 +49,14 @@ def user_posts(request):
     serializer = PostSerializer(result_page, many=True)
     return paginator.get_paginated_response(serializer.data)
     
+@swagger_auto_schema(method='delete', operation_summary='delete user')
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def user_delete(request):
+    try:
+        user=request.user 
+        user.delete()
+        return Response({'message': 'User deleted successfully'}, status=status.HTTP_204_NO_CONTENT)
+    except Exception as e:
+        return Response({f'error': 'Error deleting user, {e}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
