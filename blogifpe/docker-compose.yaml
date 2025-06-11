@@ -1,35 +1,71 @@
 services:
   blog:
     build: .
+  
     ports:
       - '8081:8081'
     environment:
       - DJANGO_PROD_ENV=True
       - DJANGO_COMMENTS=True
+      - SPRING_RABBITMQ_HOST=rabbitmq
+      - SPRING_RABBITMQ_PORT=5672
+      - SPRING_RABBITMQ_USERNAME=guest
+      - SPRING_RABBITMQ_PASSWORD=guest
     depends_on:
       - postgres
       - mongo
-
+      - rabbitmq
       
   mongo:
     image: mongo:latest
     ports:
       - "27017:27017"
     environment:
-     MONGO_INITDB_ROOT_USERNAME: karen
-     MONGO_INITDB_ROOT_PASSWORD: liana
+      MONGO_INITDB_ROOT_USERNAME: karen
+      MONGO_INITDB_ROOT_PASSWORD: liana
 
   postgres:
     image: 'postgres:15-alpine'
     container_name: postgres
     environment:
-      - 'POSTGRES_DB=django'
-      - 'POSTGRES_PASSWORD=liana'
-      - 'POSTGRES_USER=postgres'
+      - POSTGRES_DB=django
+      - POSTGRES_PASSWORD=liana
+      - POSTGRES_USER=postgres
     ports:
       - '5432:5432'
     volumes:
       - postgres_data:/var/lib/postgresql/data
+
+  frontend:
+    build: ./blog-frontend
+    container_name: frontend
+    depends_on:
+      - blog
+    ports:
+      - '8080:8080'
+  
+  email:
+    build: ./email
+    depends_on:
+      - rabbitmq
+      - blog
+    ports:
+      - '8082:8082'
+    environment:
+      - SPRING_RABBITMQ_HOST=rabbitmq
+      - SPRING_RABBITMQ_PORT=5672
+      - SPRING_RABBITMQ_USERNAME=guest
+      - SPRING_RABBITMQ_PASSWORD=guest
+
+  rabbitmq:
+    image: 'rabbitmq:3-management'
+    container_name: rabbitmq
+    environment:
+      - RABBITMQ_DEFAULT_PASS=guest
+      - RABBITMQ_DEFAULT_USER=guest
+    ports:
+      - '5672:5672'
+      - '15672:15672'
 
 volumes:
   postgres_data:
