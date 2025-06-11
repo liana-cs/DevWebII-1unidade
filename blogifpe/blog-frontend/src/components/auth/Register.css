@@ -1,0 +1,46 @@
+.register-page {
+  padding: var(--spacing-8) 0;
+  min-height: 100vh; /* Garante altura total da tela */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.register-form {
+  background-color: var(--bg-paper);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-2);
+  padding: var(--spacing-4);
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto; /* Remove o margin-left fixo */
+}
+
+.register-title {
+  font-size: var(--font-size-3xl);
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: var(--spacing-4);
+  color: #4f000b;
+}
+
+.register-field {
+  margin-bottom: var(--spacing-2);
+}
+
+.register-submit {
+  margin-top: var(--spacing-3);
+  margin-bottom: var(--spacing-2);
+}
+
+/* Responsivo para telas pequenas */
+@media (max-width: 480px) {
+  .register-form {
+    padding: var(--spacing-2);
+    margin: 0 var(--spacing-2);
+  }
+
+  .register-title {
+    font-size: var(--font-size-2xl);
+  }
+}

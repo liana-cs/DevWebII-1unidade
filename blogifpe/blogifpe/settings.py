@@ -75,11 +75,6 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 10,
 }
 
-SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(days=1), 
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
-}
-
 SWAGGER_SETTINGS = {
     'USE_SESSION_AUTH': False,
     'SECURITY_DEFINITIONS': {
@@ -91,6 +86,11 @@ SWAGGER_SETTINGS = {
     },
     'SECURE_PROXY_SSL_HEADER': ('HTTP_X_FORWARDED_PROTO', 'https'),
     'USE_X_FORWARDED_HOST': True,
+}
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=1), 
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
 }
 
 CORS_ALLOW_ALL_ORIGINS = True
@@ -226,3 +226,4 @@ LOGOUT_REDIRECT_URL = 'list_posts'
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 USE_X_FORWARDED_HOST = True
+
