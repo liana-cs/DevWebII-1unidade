@@ -9,5 +9,7 @@ urlpatterns = [
     path("<int:pk>/delete", views.delete_post, name="delete_post"),
     path("<int:pk>/comments/", views.list_comments, name="list_comments"),
     path("<int:pk>/comments/create", views.create_comment, name="create_comment"),
+    path("<int:pk>/comments/<str:comment_id>/update", views.update_comment, name="update_comment"),
+    path("<int:pk>/comments/<str:comment_id>/delete", views.delete_comment, name="delete_comment"),
     path("search/", views.search_posts, name="search_posts"),
 ]
