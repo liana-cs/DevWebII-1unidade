@@ -31,7 +31,7 @@ export const AuthProvider = ({ children }) => {
 
   const fetchUserProfile = async () => {
     try {
-      const response = await api.get('http://54.172.46.242:8081/user/user-panel/');
+      const response = await api.get('http://3.222.27.148:8081/user/user-panel/');
       setUser(response.data);
       setLoading(false);
     } catch (error) {
@@ -41,7 +41,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (username, password) => {
     try {
-      const response = await api.post('http://54.172.46.242:8081/user/token/', { username, password });
+      const response = await api.post('http://3.222.27.148:8081/user/token/', { username, password });
       localStorage.setItem('access_token', response.data.access);
       localStorage.setItem('refresh_token', response.data.refresh);
       await fetchUserProfile();
@@ -56,7 +56,7 @@ export const AuthProvider = ({ children }) => {
 
   const register = async (userData) => {
     try {
-      await api.post('http://54.172.46.242:8081/user/register/', userData);
+      await api.post('http://3.222.27.148:8081/user/register/', userData);
       return { success: true };
     } catch (error) {
       return { 

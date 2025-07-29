@@ -18,7 +18,7 @@ const PostList = () => {
 
   const fetchPosts = async () => {
     try {
-      const response = await api.get('http://54.172.46.242:8081/posts/');
+      const response = await api.get('http://3.222.27.148:8081/posts/');
       setPosts(response.data);
     } catch (error) {
       console.error('Error fetching posts:', error);
@@ -29,7 +29,7 @@ const PostList = () => {
 
   const fetchCategories = async () => {
     try {
-      const response = await api.get('http://54.172.46.242:8081/categories/');
+      const response = await api.get('http://3.222.27.148:8081/categories/');
       setCategories(response.data);
     } catch (error) {
       console.error('Error fetching categories:', error);
@@ -44,7 +44,7 @@ const PostList = () => {
     
     try {
       setLoading(true);
-      const response = await api.get(`http://54.172.46.242:8081/posts/search/?search=${searchTerm}`);
+      const response = await api.get(`http://3.222.27.148:8081/posts/search/?search=${searchTerm}`);
       setPosts(response.data);
     } catch (error) {
       console.error('Error searching posts:', error);
@@ -115,7 +115,7 @@ const PostList = () => {
               <article key={post.id} className="card post-card">
                 {post.image && (
                   <img
-                    src={`http://54.172.46.242:8081/${post.image}`}
+                    src={`http://3.222.27.148:8081/${post.image}`}
                     alt={post.title}
                     className="post-image"
                   />

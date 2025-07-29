@@ -29,7 +29,7 @@ const CreatePost = () => {
 
   const fetchCategories = async () => {
     try {
-      const response = await api.get('http://54.172.46.242:8081/categories/');
+      const response = await api.get('http://3.222.27.148:8081/categories/');
       setCategories(response.data);
     } catch (error) {
       console.error('Error fetching categories:', error);
@@ -72,7 +72,7 @@ const CreatePost = () => {
         submitData.append('image', formData.image);
       }
     /* global localStorage */
-      const response = await api.post('http://54.172.46.242:8081/posts/create/', submitData, {
+      const response = await api.post('http://3.222.27.148:8081/posts/create/', submitData, {
         headers: {
           'Content-Type': 'multipart/form-data',
           'Authorization': `Bearer ${localStorage.getItem('access_token')}`

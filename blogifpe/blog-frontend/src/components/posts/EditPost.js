@@ -32,7 +32,7 @@ const EditPost = () => {
 
   const fetchPost = async () => {
     try {
-      const response = await api.get(`http://54.172.46.242:8081/posts/${id}/`);
+      const response = await api.get(`http://3.222.27.148:8081/posts/${id}/`);
       const post = response.data;
       
       setFormData({
@@ -50,7 +50,7 @@ const EditPost = () => {
 
   const fetchCategories = async () => {
     try {
-      const response = await api.get('http://54.172.46.242:8081/categories/');
+      const response = await api.get('http://3.222.27.148:8081/categories/');
       setCategories(response.data);
     } catch (error) {
       console.error('Error fetching categories:', error);
@@ -166,7 +166,7 @@ const EditPost = () => {
                   Current Image:
                 </span>
                 <img
-                  src={`http://54.172.46.242:8081${currentImage}`}
+                  src={`http://3.222.27.148:8081${currentImage}`}
                   alt="Current"
                   className="current-image"
                 />

@@ -38,7 +38,7 @@ const Profile = () => {
 
   const fetchUserPosts = async () => {
     try {
-      const response = await api.get('http://54.172.46.242:8081/user/user-posts/');
+      const response = await api.get('http://3.222.27.148:8081/user/user-posts/');
       setUserPosts(response.data.results || response.data);
     } catch (error) {
       console.error('Error fetching user posts:', error);
@@ -59,7 +59,7 @@ const Profile = () => {
   const handleUpdateProfile = async (e) => {
     e.preventDefault();
     try {
-      await api.patch('http://54.172.46.242:8081/user/user-panel/', formData);
+      await api.patch('http://3.222.27.148:8081/user/user-panel/', formData);
       setSuccess('Profile updated successfully!');
       setEditMode(false);
       window.location.reload();
@@ -72,7 +72,7 @@ const Profile = () => {
   const handleDeletePost = async (postId) => {
     if (window.confirm('Are you sure you want to delete this post?')) {
       try {
-        await api.delete(`http://54.172.46.242:8081/posts/${postId}/delete`);
+        await api.delete(`http://3.222.27.148:8081/posts/${postId}/delete`);
         fetchUserPosts();
       } catch (error) {
         console.error('Error deleting post:', error);
