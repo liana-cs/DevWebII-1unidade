@@ -66,6 +66,23 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const DeleteUser = async () => {
+      try {
+        await api.delete('http://3.222.27.148:8081/user/delete/');
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('refresh_token');
+        setUser(null)
+        return {
+        success:true  
+        };
+      } catch (error) {
+        console.error('Error deleting user:', error);
+        return {
+        success:false
+        };
+      }
+    };
+
   const logout = () => {
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
@@ -77,7 +94,8 @@ export const AuthProvider = ({ children }) => {
     login,
     register,
     logout,
-    loading
+    loading,
+    DeleteUser
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

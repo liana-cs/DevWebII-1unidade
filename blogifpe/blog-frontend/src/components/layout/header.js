@@ -18,8 +18,8 @@ const Header = () => {
       <div className="container">
         <div className="header-toolbar">
           <h1 className="header-logo" onClick={() => navigate('/')}>
-            BlogIFPE
-          </h1>
+            Wing Bytes 
+          </h1> 
           
           <nav className="header-nav">
             <button className="header-btn" onClick={() => navigate('/')}>

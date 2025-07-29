@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
 
-import { data, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../config/api';
 import './Profile.css';
 
 const Profile = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, DeleteUser } = useAuth();
+  const [deleting, setDeleting] = useState(false);
+  const [deleteConfirmation, setDeleteConfirmation] = useState(false);
   const [activeTab, setActiveTab] = useState(0);
   const [userPosts, setUserPosts] = useState([]);
   const [editMode, setEditMode] = useState(false);
@@ -68,6 +70,22 @@ const Profile = () => {
       setTimeout(() => setError(''), 3000);
     }
   };
+
+  const handleDeleteUser=async () => {
+    if (window.confirm('Are you sure you want to delete?')) {
+      setDeleting(true); 
+      const result = await DeleteUser();
+      if (result.success) {
+      alert('Success deleting your account!')
+      navigate('/');
+      } else {
+      setError(result.error);
+      setTimeout(()=>setError(''),3000)
+      }
+      setDeleting(false);
+    }
+  } 
+  
 
   const handleDeletePost = async (postId) => {
     if (window.confirm('Are you sure you want to delete this post?')) {
@@ -147,6 +165,13 @@ const Profile = () => {
                     >
                       <span className="icon icon-edit"></span>
                       Edit Profile
+                    </button>
+                    <button
+                      className="btn btn-primary"
+                      onClick={handleDeleteUser}
+                    >
+                      <span className="icon icon-delete"></span>
+                      Delete Profile
                     </button>
                   </div>
                 </div>

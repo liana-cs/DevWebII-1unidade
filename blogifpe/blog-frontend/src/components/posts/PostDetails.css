@@ -161,3 +161,85 @@
     padding: var(--spacing-2);
   }
 }
+/* Adicionar ao final do arquivo PostDetail.css */
+
+/* Comment actions */
+.comment-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--spacing-1);
+}
+
+.comment-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-1);
+}
+
+.comment-actions {
+  display: flex;
+  gap: 4px;
+  margin-left: var(--spacing-1);
+}
+
+.comment-actions .btn {
+  padding: 2px 8px;
+  font-size: var(--font-size-xs);
+  min-height: auto;
+}
+
+.comment-edited {
+  font-style: italic;
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+}
+
+.comment-edit-textarea {
+  width: 100%;
+  min-height: 60px;
+  resize: vertical;
+  font-family: var(--font-family);
+  font-size: var(--font-size-sm);
+  margin-top: var(--spacing-1);
+}
+
+/* Hover effects for comment actions */
+.comment-item:hover .comment-actions {
+  opacity: 1;
+}
+
+.comment-actions {
+  opacity: 0.7;
+  transition: opacity var(--transition-fast);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .comment-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-1);
+  }
+  
+  .comment-meta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+  
+  .comment-actions {
+    margin-left: 0;
+  }
+}
+
+/* Button error variant for delete */
+.btn-error {
+  color: var(--error-color);
+  border-color: var(--error-color);
+}
+
+.btn-error:hover:not(:disabled) {
+  background-color: var(--error-color);
+  color: white;
+}
